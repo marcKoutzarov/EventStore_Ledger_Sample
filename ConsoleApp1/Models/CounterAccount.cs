@@ -12,7 +12,7 @@ namespace ConsoleApp1.Models
     public class CounterAccount:Account
     {
         [JsonProperty("MutationId")]
-        public System.Guid MutationId { get; set; }
+        public string MutationId { get; set; }
 
         [JsonProperty("EventNumber")]
         public long EventNumber { get; set; }

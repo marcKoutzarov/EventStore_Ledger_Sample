@@ -30,7 +30,7 @@ namespace ConsoleApp1
                                              string descr2 = "", string descr3 = "")
         {
 
-            var MutationId = Guid.NewGuid();
+          
 
             //the amount credited will be calculated by the MutationEntryType
             var CreditAmount = 0m;
@@ -82,9 +82,11 @@ namespace ConsoleApp1
                 EventNumber = LastCounterAccountEvent.EventNumber + 1,
             };
 
+            
+
             var mutation = new Mutation
             {
-                MutationId = MutationId,
+                MutationId = Guid.NewGuid().ToString(),
                 Account = lastAccountEvent.Account,
                 CounterAccount = counterAccount,
                 PreviousEventNumber = lastAccountEvent.EventNumber,
@@ -163,10 +165,9 @@ namespace ConsoleApp1
 
             Posting result = new Posting();
 
-
             Mutation accountEvent = CreateMutation(lastAccountEvent, LastCounterAccountEvent, mutationType, entryType, amount, currency, descr2, descr3);
 
-
+            //Swap CR to DR and Vsa versa before creating a CounteraccountEvent.
             MutationEntryType CounterEntryType;
             if (entryType == MutationEntryType.Cr)
             {
@@ -177,13 +178,13 @@ namespace ConsoleApp1
                 CounterEntryType = MutationEntryType.Cr;
             }
 
-
             Mutation CounteraccountEvent = CreateMutation(LastCounterAccountEvent, lastAccountEvent, mutationType, CounterEntryType, amount, currency, descr2, descr3);
 
+            // Set the mutation id's in the counterAccounts.
             CounteraccountEvent.CounterAccount.MutationId = accountEvent.MutationId;
+            accountEvent.CounterAccount.MutationId = CounteraccountEvent.MutationId;
 
             result.Mutations[0] = accountEvent;
-
             result.Mutations[1] = CounteraccountEvent;
 
             return result;
@@ -198,7 +199,7 @@ namespace ConsoleApp1
         /// <param name="accountType"></param>
         public static Mutation GenesisMutation(string currency, string accountHolder, string accountNr, AccountTypes accountType)
         {
-            var MutationId = Guid.NewGuid();
+            var MutationId = Guid.NewGuid().ToString();
             Mutation Result = new Mutation
             {
                 AccountBalances = new List<Balance>() { new Balance { Currency = currency.ToUpper(), NewBalance = 0m, OldBalance = 0m } },
@@ -207,10 +208,10 @@ namespace ConsoleApp1
                 Dr = 0m,
                 MutationId = MutationId,
                 Account = new Account { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString() },
-                CounterAccount = new CounterAccount { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString(), EventNumber = 0, PreviousEventNumber = 0, MutationId = MutationId },
+                CounterAccount = new CounterAccount { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString(), EventNumber = 0, PreviousEventNumber = -1, MutationId = MutationId },
                 MutationType = MutationTypes.Deposit.ToString(),
                 EventNumber = 0,
-                PreviousEventNumber = 0,
+                PreviousEventNumber = -1,
                 Description1 = "Account activation."
             };
 
@@ -220,7 +221,6 @@ namespace ConsoleApp1
 
         public Posting CreatePosting(string Account,string CounterAccount, MutationTypes mutationType, MutationEntryType entryType, decimal amount,  string descr2 = "", string descr3 = ""){
             Posting result = new Posting();
-
             return result;
         }
     }

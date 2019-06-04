@@ -14,22 +14,26 @@ namespace ConsoleApp1
             const string divider = "\n";
             var c = new ConnectionManager();
 
-
             Console.WriteLine("Connecting to the eventstore");
             c.Connect();
-
             Console.WriteLine(c.Status);
 
-            
+
+           
+
             Console.WriteLine(divider);
             Console.WriteLine("Press Any Key to Create an Account");
             Console.ReadKey();
-            AccountManager.CreateAccountStream(c.Connection, "EUR", "John", "100.0001", Enums.AccountTypes.Wallet);
-            AccountManager.CreateAccountStream(c.Connection, "USD", "Marc", "100.0002", Enums.AccountTypes.Wallet);
-            AccountManager.CreateAccountStream(c.Connection, "THB", "Lisa", "100.0003", Enums.AccountTypes.Wallet);
-            AccountManager.CreateAccountStream(c.Connection, "VND", "Bert", "100.0004", Enums.AccountTypes.Wallet);
-            AccountManager.CreateAccountStream(c.Connection, "THB", "Arm", "100.0006", Enums.AccountTypes.Wallet);
-            AccountManager.CreateAccountStream(c.Connection, "EUR", "PaySociety Europe", "200.0005", Enums.AccountTypes.Cash);
+
+            AccountManager.CreateAccountStream(c.Connection, "EUR", "PaySociety Europe", "200.0001", Enums.AccountTypes.Cash);
+
+            for (int i = 40; i < 80; i++)
+            {
+                var AccountNR = $"100.000{i + 1}";
+                AccountManager.CreateAccountStream(c.Connection, "EUR", $"John_Acc_{i}", AccountNR, Enums.AccountTypes.Wallet);
+            }
+
+
             Console.WriteLine("Accounts created");
             Console.WriteLine(divider);
 
@@ -48,22 +52,42 @@ namespace ConsoleApp1
             Console.WriteLine(divider);
             Console.WriteLine("Press Any Key to Get Last event of a account");
             Console.ReadKey();
-            var json = AccountManager.GetLastEvent(c.Connection, "acc-wallet_100.0001");
+            var json = AccountManager.GetLastEvent(c.Connection, "acc-wallet_100.0003");
             Console.WriteLine(json);
             Console.WriteLine(divider);
 
 
 
-            Console.WriteLine("Press Any Key append an event to a stream");
+            Console.WriteLine("Press Any Key to Add a Wallet Deposit (funding");
             Console.ReadKey();
-            //AddEvent(c.Connection, "Acc_0004", 1.02m);
-
-            var readEvents = c.Connection.ReadStreamEventsForwardAsync("$by_event_type", 0, 100, true).Result;
-            var LastEvent = readEvents.NextEventNumber;
 
 
 
+            var st = new System.Diagnostics.Stopwatch();
 
+            st.Start();
+
+            for(int i=0; i<30; i++)
+            {
+
+          
+            PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0001", "acc-cash_200.0001", 25.25m, "USD", "Deposit from City Bank", "Account nr 888888");
+
+            PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0002", "acc-cash_200.0001", 25.25m, "EUR", "Deposit from ABN AMRO", "Account nr 777777");
+
+            PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0003", "acc-cash_200.0001", 25.25m, "USD", "Deposit from HSBC", "Account nr 66666");
+
+            PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0004", "acc-cash_200.0001", 25.25m, "THB", "Deposit from Bangkok Bank", "Account nr 4565.4544.43");
+
+            PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0005", "acc-cash_200.0001", 25.25m, "EUR", "Deposit from ING Bank", "Account nr 4444");
+
+            }
+
+            st.Stop();
+
+            Console.WriteLine($"Ms elapsed : {st.ElapsedMilliseconds} Ms for 150 mutations = 300 Events.");
+            Console.WriteLine($"Avg : {st.ElapsedMilliseconds/150} Ms per mutation.");
+            Console.WriteLine($"Avg : {st.ElapsedMilliseconds / 300} Ms per Event.");
 
             Console.WriteLine(divider);
             Console.WriteLine("Press any key to exit");

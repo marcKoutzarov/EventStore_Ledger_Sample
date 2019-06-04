@@ -34,10 +34,10 @@ namespace ConsoleApp1
         // Query if a Stream exists 
         public static bool StreamExits(IEventStoreConnection connection, string StreamName)
         {
-            var LastEventsStream = connection.ReadStreamEventsBackwardAsync(StreamName.ToLower(), 0, 1, false).Result;
+            var LastEventsStream = connection .ReadStreamEventsBackwardAsync(StreamName.ToLower(), 0, 1, false).Result;
 
             SliceReadStatus Status = LastEventsStream.Status;
-            
+              
             // todo check if i can get a event. If not the stream doesn not exists 
 
             return (Status == 0);
@@ -48,8 +48,11 @@ namespace ConsoleApp1
 
             if (AccountManager.StreamExits(connection,accountStream))
             {
-                var LastEventsStream = connection.ReadStreamEventsBackwardAsync(accountStream, 0, 1, false).Result;
-                var json = Encoding.UTF8.GetString(LastEventsStream.Events[0].Event.Data);
+                var EventsStream = connection.ReadStreamEventsBackwardAsync(accountStream,0, 1, true).Result;
+                var LastEventNr = EventsStream.LastEventNumber;
+                var LastEvent = connection.ReadStreamEventsBackwardAsync(accountStream, LastEventNr, 1, true).Result;
+                var json = Encoding.UTF8.GetString(LastEvent.Events[0].Event.Data);
+
                 return json;
             }
             else
@@ -69,7 +72,7 @@ namespace ConsoleApp1
             var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
            
             // create an event
-            var myEvent = new EventData(genesisMutation.MutationId, "posting", true, json, null);
+            var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), "posting", true, json, null);
   
             //Append Initial event
             connection.AppendToStreamAsync($"acc-{accountType.ToString().ToLower()}_{accountNr}".ToLower(),-1, myEvent).Wait();
