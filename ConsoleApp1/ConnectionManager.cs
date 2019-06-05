@@ -45,7 +45,7 @@ namespace ConsoleApp1
                     _connection = null;
                 }
                 
-                _connection = EventStoreConnection.Create(connectionString, "PostingConnection");
+                _connection = EventStoreConnection.Create(connectionString);
 
                 _connection.Closed += ConnectionClosedEvent;
                 _connection.Connected += ConnectedEvent;

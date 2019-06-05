@@ -35,11 +35,7 @@ namespace ConsoleApp1
         public static bool StreamExits(IEventStoreConnection connection, string StreamName)
         {
             var LastEventsStream = connection .ReadStreamEventsBackwardAsync(StreamName.ToLower(), 0, 1, false).Result;
-
             SliceReadStatus Status = LastEventsStream.Status;
-              
-            // todo check if i can get a event. If not the stream doesn not exists 
-
             return (Status == 0);
         }
 
@@ -50,9 +46,12 @@ namespace ConsoleApp1
             {
                 var EventsStream = connection.ReadStreamEventsBackwardAsync(accountStream,0, 1, true).Result;
                 var LastEventNr = EventsStream.LastEventNumber;
-                var LastEvent = connection.ReadStreamEventsBackwardAsync(accountStream, LastEventNr, 1, true).Result;
-                var json = Encoding.UTF8.GetString(LastEvent.Events[0].Event.Data);
 
+                EventsStream = connection.ReadStreamEventsBackwardAsync(accountStream, LastEventNr, 1, true).Result;
+                var LastEvent = EventsStream.Events[0].Event;
+
+
+                var json = Encoding.UTF8.GetString(LastEvent.Data);
                 return json;
             }
             else

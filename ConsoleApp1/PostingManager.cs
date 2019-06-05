@@ -25,8 +25,9 @@ namespace ConsoleApp1
             Mutation walletAccountLastEvent = Mutation.FromJson(AccountManager.GetLastEvent(connection, walletAccount));
             Mutation CashAccountLastEvent = Mutation.FromJson(AccountManager.GetLastEvent(connection, CashAccount)); ;
 
-            // TODO Must check if the CashAccount is of the type Cash and the Wallet Account of the Type Wallet
-            // If not then do not continue. 
+            //
+            // TODO Must check if the CashAccount is of the type Cash and the Wallet Account of the Type Wallet. If not then do not continue.
+            //  
 
 
             //Create a Posting Object.
@@ -40,14 +41,30 @@ namespace ConsoleApp1
             var myEvent2 = new EventData(Guid.Parse(CashAccountNewEvent.MutationId), "posting", true, Encoding.UTF8.GetBytes(Mutation.ToJson(CashAccountNewEvent)), null);
 
 
-            // First Credit the Cash Account
+
+            // 
+            // TODO validate the balance the wallet account can not be negative
+            //
+
+
+            // 
+            // TODO Calculate the fee
+            //
+
+
+
+            //
+            // TODO transaction learn about it
+            //
+
+
+            //First Credit the Cash Account
             //Append Event CashAccount
             connection.AppendToStreamAsync(CashAccount, CashAccountNewEvent.PreviousEventNumber, myEvent2).Wait();
 
-            // Then Debit the Wallet Account
-            // Append Event Wallet
+            //Then Debit the Wallet Account
+            //Append Event Wallet
             connection.AppendToStreamAsync(walletAccount, walletAccountNewEvent.PreviousEventNumber, myEvent1).Wait();
-
         }
     }
 }

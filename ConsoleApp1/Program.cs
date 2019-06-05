@@ -27,7 +27,7 @@ namespace ConsoleApp1
 
             AccountManager.CreateAccountStream(c.Connection, "EUR", "PaySociety Europe", "200.0001", Enums.AccountTypes.Cash);
 
-            for (int i = 40; i < 80; i++)
+            for (int i = 80; i < 120; i++)
             {
                 var AccountNR = $"100.000{i + 1}";
                 AccountManager.CreateAccountStream(c.Connection, "EUR", $"John_Acc_{i}", AccountNR, Enums.AccountTypes.Wallet);
@@ -67,10 +67,11 @@ namespace ConsoleApp1
 
             st.Start();
 
+
+
+            //avg is now 200ms per mmutation. If we turn of all projections except $streams
             for(int i=0; i<30; i++)
             {
-
-          
             PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0001", "acc-cash_200.0001", 25.25m, "USD", "Deposit from City Bank", "Account nr 888888");
 
             PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0002", "acc-cash_200.0001", 25.25m, "EUR", "Deposit from ABN AMRO", "Account nr 777777");
@@ -80,8 +81,8 @@ namespace ConsoleApp1
             PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0004", "acc-cash_200.0001", 25.25m, "THB", "Deposit from Bangkok Bank", "Account nr 4565.4544.43");
 
             PostingManager.HandleWalletDeposit(c.Connection, "acc-wallet_100.0005", "acc-cash_200.0001", 25.25m, "EUR", "Deposit from ING Bank", "Account nr 4444");
-
             }
+
 
             st.Stop();
 

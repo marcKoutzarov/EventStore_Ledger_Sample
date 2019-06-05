@@ -8,3 +8,5 @@ ConsoleApp1/bin/Debug/netcoreapp2.2/ConsoleApp1.runtimeconfig.json
 ConsoleApp1/bin/Debug/netcoreapp2.2/ConsoleApp1.runtimeconfig.dev.json
 ConsoleApp1/bin/Debug/netcoreapp2.2/ConsoleApp1.deps.json
 .vs/
+ConsoleApp1/bin/
+ConsoleApp1/obj/
