@@ -1,44 +1,39 @@
-﻿using ConsoleApp1.Models;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MutationEventManager.cs" company="Paysociety">
+//     All rights Reserved
+// </copyright>
+//-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ConsoleApp1.Enums;
+using ConsoleApp1.Models;
 
 namespace ConsoleApp1
 {
-   public class MutationEventManager
+    public class MutationEventManager
     {
         /// <summary>
         /// Creates a Single Mutation
         /// </summary>
         /// <param name="account">Account affected by this mutation</param>
-        /// <param name="previousEventNr">The Event Number of the previeous Event.</param>
+        /// <param name="previousEventNr">The Event Number of the previous Event.</param>
         /// <param name="counterAccount">The Counter Party Account for this mutation</param>
         /// <param name="mutationType">Type of mutation example Deposit of Withdrawal</param>
         /// <param name="entryType">Credit of Debit</param>
         /// <param name="prevBalance">Previous balance of the Account</param>
-        /// <param name="amount">The Ammount mutated</param>
+        /// <param name="amount">The Amount mutated</param>
         /// <param name="currency">Asset type ex USD</param>
         /// <param name="descr2"></param>
-        /// <returns></returns>
-        private static Mutation CreateMutation(Mutation lastAccountEvent,
-                                             Mutation LastCounterAccountEvent,
-                                             MutationTypes mutationType,
-                                             MutationEntryType entryType,
-                                             decimal amount,
-                                             string currency,
-                                             string descr2 = "", string descr3 = "")
+        /// <returns>Mutation object</returns>
+        private static Mutation CreateMutation(Mutation lastAccountEvent, Mutation LastCounterAccountEvent, MutationTypes mutationType, MutationEntryTypes entryType, decimal amount, string currency,  string descr2 = "", string descr3 = "")
         {
-
-          
-
-            //the amount credited will be calculated by the MutationEntryType
+           // the amount credited will be calculated by the MutationEntryType
             var CreditAmount = 0m;
 
-            //the amount credited will be calculated by the MutationEntryType
+            // the amount credited will be calculated by the MutationEntryType
             var DebitAmount = 0m;
 
-            //New balance will be calculated by the MutationEntryType Dr + and Cr -
+            // New balance will be calculated by the MutationEntryType Dr + and Cr -
             var newBalance = 0m;
 
             //this old balance is the new Balance of the previous mutation
@@ -55,24 +50,24 @@ namespace ConsoleApp1
 
 
             // generate the default description (goes to descr1)
-            var descr1 = ($"{mutationType.ToString().Replace('_', ' ')}  {entryType.ToString()} {amount} {currency}."); ;
+            var descr1 = ($"{mutationType.ToString().Replace('_', ' ')}  {entryType.ToString()} {amount} {currency}."); 
 
 
             //Calucate the balance and Debit and Credit amount
             switch (entryType)
             {
-                case MutationEntryType.Cr:
+                case MutationEntryTypes.Cr:
                     CreditAmount = amount;
                     newBalance = oldBalance - amount;
 
                     break;
-                case MutationEntryType.Dr:
+                case MutationEntryTypes.Dr:
                     DebitAmount = amount;
                     newBalance = oldBalance + amount;
                     break;
             }
 
-            //Create counterAccount Information
+            // Create counterAccount Information
             CounterAccount counterAccount = new CounterAccount
             {
                 AccountHolder = LastCounterAccountEvent.Account.AccountHolder,
@@ -105,43 +100,7 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="balances"></param>
-        /// <param name="oldBalance"></param>
-        /// <param name="NewBalance"></param>
-        /// <param name="currency"></param>
-        /// <returns></returns>
-        private static List<Balance> UpdateBalance(List<Balance> balances, decimal oldBalance, decimal NewBalance, string currency)
-        {
-
-            var addBalanceItem = true;
-
-            foreach (Balance b in balances)
-            {
-                if (b.Currency == currency)
-                {
-                    b.NewBalance = NewBalance;
-                    b.OldBalance = oldBalance;
-                    addBalanceItem = false;
-                }
-            }
-
-            if (addBalanceItem)
-            {
-                balances.Add(new Balance
-                {
-                    Currency = currency,
-                    NewBalance = NewBalance,
-                    OldBalance = oldBalance
-                });
-            }
-
-            return balances;
-        }
-
-        /// <summary>
-        /// 
+        /// Create a new posting
         /// </summary>
         /// <param name="lastAccountEvent"></param>
         /// <param name="LastCounterAccountEvent"></param>
@@ -151,31 +110,22 @@ namespace ConsoleApp1
         /// <param name="currency"></param>
         /// <param name="descr2"></param>
         /// <param name="descr3"></param>
-        /// <returns></returns>
-        public static Posting CreatePosting(Mutation lastAccountEvent,
-                                             Mutation LastCounterAccountEvent,
-                                             MutationTypes mutationType,
-                                             MutationEntryType entryType,
-                                             decimal amount,
-                                             string currency,
-                                             string descr2 = "", string descr3 = "")
+        /// <returns>Posting object</returns>
+        public static Posting CreatePosting(Mutation lastAccountEvent, Mutation LastCounterAccountEvent, MutationTypes mutationType, MutationEntryTypes entryType, decimal amount, string currency, string descr2 = "", string descr3 = "")
         {
-
-
-
             Posting result = new Posting();
 
             Mutation accountEvent = CreateMutation(lastAccountEvent, LastCounterAccountEvent, mutationType, entryType, amount, currency, descr2, descr3);
 
-            //Swap CR to DR and Vsa versa before creating a CounteraccountEvent.
-            MutationEntryType CounterEntryType;
-            if (entryType == MutationEntryType.Cr)
+            // Swap CR to DR and Vsa versa before creating a CounteraccountEvent.
+            MutationEntryTypes CounterEntryType;
+            if (entryType == MutationEntryTypes.Cr)
             {
-                CounterEntryType = MutationEntryType.Dr;
+                CounterEntryType = MutationEntryTypes.Dr;
             }
             else
             {
-                CounterEntryType = MutationEntryType.Cr;
+                CounterEntryType = MutationEntryTypes.Cr;
             }
 
             Mutation CounteraccountEvent = CreateMutation(LastCounterAccountEvent, lastAccountEvent, mutationType, CounterEntryType, amount, currency, descr2, descr3);
@@ -191,12 +141,13 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// 
+        /// Generate the Initial Event when opening an Account
         /// </summary>
         /// <param name="currency"></param>
         /// <param name="accountHolder"></param>
         /// <param name="accountNr"></param>
         /// <param name="accountType"></param>
+        /// <returns>a Mutation</returns>  
         public static Mutation GenesisMutation(string currency, string accountHolder, string accountNr, AccountTypes accountType)
         {
             var MutationId = Guid.NewGuid().ToString();
@@ -218,10 +169,39 @@ namespace ConsoleApp1
             return Result;
         }
 
+        /// <summary>
+        /// Update the Balance list
+        /// </summary>
+        /// <param name="balances"></param>
+        /// <param name="oldBalance"></param>
+        /// <param name="NewBalance"></param>
+        /// <param name="currency"></param>
+        /// <returns>List<Balance></returns>
+        private static List<Balance> UpdateBalance(List<Balance> balances, decimal oldBalance, decimal NewBalance, string currency)
+        {
 
-        public Posting CreatePosting(string Account,string CounterAccount, MutationTypes mutationType, MutationEntryType entryType, decimal amount,  string descr2 = "", string descr3 = ""){
-            Posting result = new Posting();
-            return result;
+            var addBalanceItem = true;
+
+            foreach (Balance b in balances)
+            {
+                if (b.Currency == currency){
+                    b.NewBalance = NewBalance;
+                    b.OldBalance = oldBalance;
+                    addBalanceItem = false;
+                }
+            }
+
+            if (addBalanceItem)
+            {
+                balances.Add(new Balance
+                {
+                    Currency = currency,
+                    NewBalance = NewBalance,
+                    OldBalance = oldBalance
+                });
+            }
+
+            return balances;
         }
     }
 }

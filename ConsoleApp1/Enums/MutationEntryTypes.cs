@@ -1,10 +1,15 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="MutationEntryTypes.cs" company="Paysociety">
+//     All rights Reserved
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ConsoleApp1.Enums
 {
-    public enum MutationEntryType
+    public enum MutationEntryTypes
     {
         /// <summary>
         /// Debit booking. Amount is added to account

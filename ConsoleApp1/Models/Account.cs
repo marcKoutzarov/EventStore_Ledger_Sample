@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Account.cs" company="Paysociety">
+//     All rights Reserved
+// </copyright>
+//-----------------------------------------------------------------------
+using Newtonsoft.Json;
 
 namespace ConsoleApp1.Models
 {

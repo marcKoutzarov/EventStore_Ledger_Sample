@@ -1,4 +1,9 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ConnectionManager.cs" company="Paysociety">
+//     All rights Reserved
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Newtonsoft.Json;

@@ -1,15 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿//-----------------------------------------------------------------------
+// <copyright file="CounterAccount.cs" company="Paysociety">
+//     All rights Reserved
+// </copyright>
+//-----------------------------------------------------------------------
+using Newtonsoft.Json;
 
 namespace ConsoleApp1.Models
 {
     /// <summary>
-    /// Extention of the Account Class. Holding the 
-    /// MutationId of the Revenue or Receivable.
+    /// CounterAccount Class. Holding the MutationId of the Revenue or Receivable.
     /// </summary>
-    public class CounterAccount:Account
+    public class CounterAccount: Account
     {
         [JsonProperty("MutationId")]
         public string MutationId { get; set; }
@@ -19,6 +20,5 @@ namespace ConsoleApp1.Models
 
         [JsonProperty("PreviousEventNumber")]
         public long PreviousEventNumber { get; set; }
-
     }
 }
