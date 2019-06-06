@@ -87,12 +87,14 @@ namespace ConsoleApp1
         /// <param name="accountNr">Account Number</param>
         public static void CreateWalletStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
         {
-            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Wallet}.{accountNr}"))
+            var streamName = $"acc-{(int)AccountTypes.Wallet}.{accountNr}".ToLower();
+
+            if (AccountManager.StreamExits(connection, streamName))
             {
                 return;
             }
-
-            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Wallet);
+                       
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, streamName, AccountTypes.Wallet);
             
             // convert to json
             var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
@@ -101,7 +103,7 @@ namespace ConsoleApp1
             var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedWallet.ToString(), true, json, null);
             
             // Append Initial event
-            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Wallet}.{accountNr}".ToLower(), -1, myEvent).Wait();
+            connection.AppendToStreamAsync(streamName, -1, myEvent).Wait();
         }
 
         /// <summary>
@@ -113,12 +115,14 @@ namespace ConsoleApp1
         /// <param name="accountNr">Account Number</param>
         public static void CreateCashAccountStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
         {
-            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Cash}.{accountNr}"))
+            var streamName = $"acc-{(int)AccountTypes.Cash}.{accountNr}".ToLower();
+
+            if (AccountManager.StreamExits(connection, streamName))
             {
                 return;
             }
 
-            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Cash);
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, streamName, AccountTypes.Cash);
 
             // convert to json
             var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
@@ -127,7 +131,7 @@ namespace ConsoleApp1
             var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedCashAccount.ToString(), true, json, null);
 
             // Append Initial event
-            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Cash}.{accountNr}".ToLower(), -1, myEvent).Wait();
+            connection.AppendToStreamAsync(streamName, -1, myEvent).Wait();
         }
 
         /// <summary>
@@ -139,12 +143,14 @@ namespace ConsoleApp1
         /// <param name="accountNr">Account Number</param>
         public static void CreateFeeAccountStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
         {
-            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Fee}.{accountNr}"))
+            var streamName = $"acc-{(int)AccountTypes.Fee}.{accountNr}".ToLower();
+
+            if (AccountManager.StreamExits(connection, streamName))
             {
                 return;
             }
 
-            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Fee);
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, streamName, AccountTypes.Fee);
 
             // convert to json
             var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
@@ -153,7 +159,7 @@ namespace ConsoleApp1
             var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedFeeAccount.ToString(), true, json, null);
 
             // Append Initial event
-            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Fee}.{accountNr}".ToLower(), -1, myEvent).Wait();
+            connection.AppendToStreamAsync(streamName, -1, myEvent).Wait();
         }
 
 

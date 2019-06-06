@@ -113,6 +113,8 @@ namespace ConsoleApp1
         /// <returns>Posting object</returns>
         public static Posting CreatePosting(Mutation lastAccountEvent, Mutation LastCounterAccountEvent, MutationTypes mutationType, MutationEntryTypes entryType, decimal amount, string currency, string descr2 = "", string descr3 = "")
         {
+           
+
             Posting result = new Posting();
 
             Mutation accountEvent = CreateMutation(lastAccountEvent, LastCounterAccountEvent, mutationType, entryType, amount, currency, descr2, descr3);
@@ -136,7 +138,7 @@ namespace ConsoleApp1
 
             result.Mutations[0] = accountEvent;
             result.Mutations[1] = CounteraccountEvent;
-
+           
             return result;
         }
 
@@ -158,7 +160,7 @@ namespace ConsoleApp1
                 Cr = 0m,
                 Dr = 0m,
                 MutationId = MutationId,
-                Account = new Account { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString() },
+                Account = new Account { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString()},
                 CounterAccount = new CounterAccount { AccountHolder = accountHolder, AccountNumber = accountNr, AccountType = accountType.ToString(), EventNumber = 0, PreviousEventNumber = -1, MutationId = MutationId },
                 MutationType = MutationTypes.Deposit.ToString(),
                 EventNumber = 0,

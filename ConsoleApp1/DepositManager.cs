@@ -34,9 +34,13 @@ namespace ConsoleApp1
             // reset the objects
             ResetManager();
 
+          
+           
             // get the last mutations of the both Accounts
             walletAccountLastEvent = Mutation.FromJson(AccountManager.GetLastEvent(connection, walletAccount));
             cashAccountLastEvent = Mutation.FromJson(AccountManager.GetLastEvent(connection, CashAccount));
+
+          
 
             //
             // TODO Must check if the CashAccount is of the type Cash and the Wallet Account of the Type Wallet. If not then do not continue.
@@ -54,18 +58,22 @@ namespace ConsoleApp1
             var myEvent2 = new EventData(Guid.Parse(CashAccountNewEvent.MutationId), EventTypes.WalletFunded.ToString(), true, Encoding.UTF8.GetBytes(Mutation.ToJson(CashAccountNewEvent)), null);
 
             // TODO validate the balance the wallet account can not be negative
-             
-            // TODO Calculate the fee
-  
-            // TODO transaction learn about it
- 
-            // First Credit the Cash Account
-            //Append Event CashAccount
-            connection.AppendToStreamAsync(CashAccount, CashAccountNewEvent.PreviousEventNumber, myEvent2).Wait();
 
-            // Then Debit the Wallet Account
-            // Append Event Wallet
+            // TODO Calculate the fee
+
+            // TODO transaction learn about it
+
+            // this takes to long 165 ms..
+            // Events is a Array. One day need to try to experiment with this.
+            // First Credit the Cash Account 
+            connection.AppendToStreamAsync(CashAccount, CashAccountNewEvent.PreviousEventNumber, myEvent2).Wait();
+            //Then Debit the Wallet Account
             connection.AppendToStreamAsync(walletAccount, walletAccountNewEvent.PreviousEventNumber, myEvent1).Wait();
+
+            // var st = new System.Diagnostics.Stopwatch();
+            // st.Start();
+            // st.Stop();
+            // System.Diagnostics.Debug.WriteLine($"Mutation created: {st.ElapsedMilliseconds} ms");
         }
 
         private void ResetManager()
