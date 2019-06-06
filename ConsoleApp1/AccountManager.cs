@@ -79,30 +79,84 @@ namespace ConsoleApp1
         }
 
         /// <summary>
-        /// create an Account stream
+        /// create stream for a Wallet
         /// </summary>
         /// <param name="connection">connection to ES</param>
         /// <param name="currency">ISO 3</param>
         /// <param name="accountHolder">Name of the Account owner</param>
         /// <param name="accountNr">Account Number</param>
-        /// <param name="accountType">Type of account</param>
-        public static void CreateAccountStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr, AccountTypes accountType)
+        public static void CreateWalletStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
         {
-            if (AccountManager.StreamExits(connection, $"acc-{(int)accountType}.{accountNr}"))
+            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Wallet}.{accountNr}"))
             {
                 return;
             }
 
-            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, accountType);
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Wallet);
             
             // convert to json
             var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
             
             // create an event
-            var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), "posting", true, json, null);
+            var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedWallet.ToString(), true, json, null);
             
             // Append Initial event
-            connection.AppendToStreamAsync($"acc-{(int)accountType}.{accountNr}".ToLower(), -1, myEvent).Wait();
+            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Wallet}.{accountNr}".ToLower(), -1, myEvent).Wait();
         }
+
+        /// <summary>
+        /// create stream for a Cash Account
+        /// </summary>
+        /// <param name="connection">connection to ES</param>
+        /// <param name="currency">ISO 3</param>
+        /// <param name="accountHolder">Name of the Account owner</param>
+        /// <param name="accountNr">Account Number</param>
+        public static void CreateCashAccountStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
+        {
+            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Cash}.{accountNr}"))
+            {
+                return;
+            }
+
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Cash);
+
+            // convert to json
+            var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
+
+            // create an event
+            var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedCashAccount.ToString(), true, json, null);
+
+            // Append Initial event
+            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Cash}.{accountNr}".ToLower(), -1, myEvent).Wait();
+        }
+
+        /// <summary>
+        /// create stream for a Fees Account
+        /// </summary>
+        /// <param name="connection">connection to ES</param>
+        /// <param name="currency">ISO 3</param>
+        /// <param name="accountHolder">Name of the Account owner</param>
+        /// <param name="accountNr">Account Number</param>
+        public static void CreateFeeAccountStream(IEventStoreConnection connection, string currency, string accountHolder, string accountNr)
+        {
+            if (AccountManager.StreamExits(connection, $"acc-{(int)AccountTypes.Fee}.{accountNr}"))
+            {
+                return;
+            }
+
+            var genesisMutation = MutationEventManager.GenesisMutation(currency, accountHolder, accountNr, AccountTypes.Fee);
+
+            // convert to json
+            var json = Encoding.UTF8.GetBytes(Models.Mutation.ToJson(genesisMutation));
+
+            // create an event
+            var myEvent = new EventData(Guid.Parse(genesisMutation.MutationId), EventTypes.CreatedFeeAccount.ToString(), true, json, null);
+
+            // Append Initial event
+            connection.AppendToStreamAsync($"acc-{(int)AccountTypes.Fee}.{accountNr}".ToLower(), -1, myEvent).Wait();
+        }
+
+
+
     }
 }

@@ -3,6 +3,7 @@
 //     All rights Reserved
 // </copyright>
 //-----------------------------------------------------------------------
+using ConsoleApp1.Enums;
 using ConsoleApp1.Models;
 using EventStore.ClientAPI;
 using System;
@@ -49,26 +50,15 @@ namespace ConsoleApp1
 
 
             // create an eventStore Event for the 2 Postings
-            var myEvent1 = new EventData(Guid.Parse(walletAccountNewEvent.MutationId), "posting", true, Encoding.UTF8.GetBytes(Mutation.ToJson(walletAccountNewEvent)), null);
-            var myEvent2 = new EventData(Guid.Parse(CashAccountNewEvent.MutationId), "posting", true, Encoding.UTF8.GetBytes(Mutation.ToJson(CashAccountNewEvent)), null);
-
-
-
+            var myEvent1 = new EventData(Guid.Parse(walletAccountNewEvent.MutationId), EventTypes.WalletFunded.ToString(), true, Encoding.UTF8.GetBytes(Mutation.ToJson(walletAccountNewEvent)), null);
+            var myEvent2 = new EventData(Guid.Parse(CashAccountNewEvent.MutationId), EventTypes.WalletFunded.ToString(), true, Encoding.UTF8.GetBytes(Mutation.ToJson(CashAccountNewEvent)), null);
 
             // TODO validate the balance the wallet account can not be negative
-            
-
-
-          
+             
             // TODO Calculate the fee
-           
-
-
-
+  
             // TODO transaction learn about it
-           
-
-
+ 
             // First Credit the Cash Account
             //Append Event CashAccount
             connection.AppendToStreamAsync(CashAccount, CashAccountNewEvent.PreviousEventNumber, myEvent2).Wait();

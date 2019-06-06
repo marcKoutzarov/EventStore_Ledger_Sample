@@ -12,7 +12,7 @@ namespace ConsoleApp1.Enums
     public enum MutationTypes
     {
         Deposit,                    // Debited (added)
-        Transfer,                   
+        Transfer,                   // Credited (deducted)
         WithDrawal,                 // Credited(deducted)
         Fee_Deposit,                // Credited
         Fee_WithDrawal,             // Credited

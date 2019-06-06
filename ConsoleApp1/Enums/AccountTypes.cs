@@ -11,9 +11,9 @@ namespace ConsoleApp1.Enums
 {
     public enum AccountTypes
     {
-        Cash=10,
-        Wallet=20,
-        Fee=30,
-        Tax=40
+        Cash=100,
+        Wallet=200,
+        Fee=300,
+        Tax=400
     }
 }
